@@ -18,11 +18,12 @@ services:
       - redis
       - mysql
       - mailhog
+      - cron
     networks:
       - laravel
 
   mysql:
-    image: mysql:5.7.29
+    image: mysql:8.0
     container_name: mysql
     restart: unless-stopped
     tty: true
@@ -54,6 +55,17 @@ services:
     restart: unless-stopped
     ports:
       - 6379:6379
+    networks:
+      - laravel
+
+  cron:
+    image: app_php # you laravel app image
+    container_name: cron
+    command: php artisan schedule:work
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - php
     networks:
       - laravel
 
